@@ -13,15 +13,15 @@ class UI(Tk):
         self.canvas.pack()
         #self.info= PhotoImage(file='img/info.png')
         
-        # monthly income, monthly expense, current age, retirement age, student loan amount left, [years to pay off student loan], car loan, mortgage]
+        # monthly income, monthly expense, current age, retirement age, student loan amount left, [years to pay off student loan],rate, car loan, mortgage]
         # we won't worry about mortgage and car loan 
-        inputs = [100,20,10,12,100,[10,20,30],4,5]
+        inputs = [100,20,58,60,100,[10,20,30],0.04,5]
         moving_avg = [0.4,0.4,]
         self.graph(self.width,self.height,inputs,moving_avg)
 
 
     # principal is how much you borrowed
-    def simpleIntRate(principal,rate,years):
+    def simpleIntRate(self,principal,rate,years):
         dailyRate = rate/365
         daily_int = principal*dailyRate
         # assuming month is 30 day cycle
@@ -30,7 +30,7 @@ class UI(Tk):
         return year_int*years
 
 # double check unsure about this one
-    def compoundIntRate(principal,rate,years): 
+    def compoundIntRate(self,principal,rate,years): 
         new_Principal = principal
         dailyRate = rate/365
         totalInterest = principal*dailyRate
@@ -45,7 +45,7 @@ class UI(Tk):
 
 # yearVect is a vector of possible years to repay the loan default/baseline is 10
 # we can also add to the length of th vector too 
-    def amortizedStudentLoan(principal,rate,yearVect,fedLoan):
+    def amortizedStudentLoan(self,principal,rate,yearVect,fedLoan):
         loan_projections = []
         amt = 0
         total = 0
@@ -65,9 +65,11 @@ class UI(Tk):
     
         for i in range(0,len(loan_projections)):
             print(loan_projections[i])
+        
+        return loan_projections
 
 
-    def retirement(monthlyExp,ma_sp,post_retire_yr, pre_retire_yr):
+    def retirement(self,monthlyExp,ma_sp,post_retire_yr, pre_retire_yr):
         infl = 0.025
         totalExp = 0
         annualExp = monthlyExp*12
@@ -84,6 +86,8 @@ class UI(Tk):
     
         # array that stores savings at each time period
         savings = []
+        print(pre_retire_yr)
+        print(len(ma_sp))
         for i in range(0,pre_retire_yr):
         # subtract by 1 due to indexing in the exponent
             discounts = (1 + ma_sp[i])**(pre_retire_yr-i-1)
@@ -101,30 +105,80 @@ class UI(Tk):
     # a vector inputs storing information user inputs
     def graph(self,width,height,inputs,moving_avg):
         self.canvas.create_rectangle(0,0,width,height,fill="medium sea green",width=0)
+
         self.canvas.create_rectangle(width/12,height/8,11*width/12,11*height/12,fill="white")
         
+        # save button 
+        self.canvas.create_rectangle(width-50,10,width-10,50,fill="white")
+        self.canvas.create_text(width-30,30,text="Save",font="Arial 10 bold")
+        
+        # back button 
+        #self.canvas.create_rectangle(width-30,10,)
         
         # retirement fields filled out 
         if (inputs[2]!=0 and inputs[3]!=0):
             death_age = 80
-           # savings = retirement(inputs[0],moving_avg,death_age-inputs[3],inputs[3]-inputs[2])
+            savings = self.retirement(inputs[0],moving_avg,death_age-inputs[3],inputs[3]-inputs[2])
            #for i in range(0,len(savings)):
                 #canvas.create_oval()
             self.canvas.create_text(width/2, height/15, text="Annual Retirement Savings",font="Arial 20 bold")
+            diff = 11*width/12 - (width/12)
+            num = inputs[3]-inputs[2]
+            
+            space = diff/(num+1)
+            height_range = (11*height/12 - height/8) -10
+            for i in range(0,len(savings)):
+                self.canvas.create_text((width/12)+space*(i+1),height-height/20,text = str(i+1),font="Arial 15 bold")
+                self.canvas.create_oval((width/12) + (space*(i+1)) -5 ,height/2 -5,(width/12) + space*(i+1)+5,height/2 +5,fill="black")
+                #self.canvas.create_text((width/12) + space*(i+1),height/2,text=str(savings[i]),font="Arial 10 bold")
+                self.canvas.create_text((width/12) + (space*(i+1)),(height/2)-20,text=str(savings[i]),font="Arial 10 bold")
             
         # this is for student loans( being a bit lazy here)
         else:
             principal = inputs[4]
             #an array here 
             years = inputs[5]
-            self.canvas.create_text(width/2, height/15, text="Student Loan Payments",font="Arial 20 bold")
-            for i in range(0,len(inputs[)
-            self.canvas.create_text()
+            rate = inputs[6]
             
+            # can be true for now 
+            fedLoan = True
+            self.canvas.create_text(width/2, height/15, text="Student Loan Payments",font="Arial 20 bold")
+            
+            diff = 11*width/12 - (width/12)
+            space = diff/(len(years)+1)
+            
+            # dummy loan vector 
+            loans = [1000,900,800]
+            
+            #loans = amortizedStudentLoan(principal,rate,years,fedLoan)
+            #range = max(loans)-min(loans)
+            
+            # plotting values for graph (bar graph style)  
+            #height_range = (11*height/12 - height/8) -10
+            # drawing the years on the bottom
+            
+            length = len(years)
+            print(years)
+            for i in range(0,length):
+                print("hi")
+            #for i in range(0,len(years)):
+                #print("hi")
+               # place = (10*width/12)+space*(i+1)
+                #print(place)
+                #self.canvas.create_text((width/12)+space*(i+1),height-height/20,text = str(years[i]),font="Arial 15 bold")
+                # dollar per space
+               # space = height_range/range
+               # self.canvas.create_rectangle((width/12)+space*(i+1)-8,loans[i]*space,(width/12)+space*(i+1)+8,height/15,fill="red")
+            
+            
+            
+           
+            
+            #self.canvas.create_rectangle( ,width/20, 
+            
+                        
             
                 
-        
-        
 
 
 predUI = UI()
