@@ -1,5 +1,6 @@
     # monthly expense, array of moving averages for the n payment times including retirement year
     # years to ret until retirement, inflation (2.5%) 
+    # PRE retire length array must be the same as moving average spot rate array!
 def retirement(monthlyExp,ma_sp,post_retire_yr, pre_retire_yr):
     infl = 0.025
     totalExp = 0
